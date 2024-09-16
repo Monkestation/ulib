@@ -665,6 +665,7 @@ end
 		v2.40 - Initial.
 ]]
 function ULib.isValidIP( ip )
+	if (not isstring(ip)) then return false end
 	if ip:find( "^%d%d?%d?%.%d%d?%d?%.%d%d?%d?%.%d%d?%d?$" ) then
 		return true
 	else
@@ -672,6 +673,80 @@ function ULib.isValidIP( ip )
 	end
 end
 
+
+--[[
+	Function: integerToIP
+
+	Parameters:
+
+		ip - The integer of the supposed ip.
+
+	Returns:
+
+		string in integer form
+
+	-MONKECUSTOM
+]]
+function ULib.integerToIP( ip )
+	if(not isnumber(ip)) then return nil end
+	if (ip > 4294967295) then return nil end
+
+	local part1 = bit.band(ip, 255)
+	local part2 = bit.band(bit.rshift(ip, 8), 255)
+	local part3 = bit.band(bit.rshift(ip, 16), 255)
+	local part4 = bit.band(bit.rshift(ip, 24), 255)
+
+	return string.format("%d.%d.%d.%d", part4, part3, part2, part1)
+end
+
+--[[
+    Function: IPToInteger
+
+    Parameters:
+
+        ip - The IP address in string form
+
+    Returns:
+
+        The integer representation of the IP address
+
+    -MONKECUSTOM
+]]
+
+function ULib.IPToInteger( ip )
+	-- https://stackoverflow.com/a/52639660
+	local i, dec = 3, 0
+	for d in string.gmatch(ip, "%d+") do
+		dec = dec + 2 ^ (8 * i) * d
+		i = i - 1
+	end
+	return dec
+end
+
+--[[
+    Function: splitString
+
+    Parameters:
+
+        inputStr - The string to split
+        sep - The separator to use (optional, default is whitespace)
+
+    Returns:
+
+        A table containing the split substrings
+
+    -MONKECUSTOM
+]]
+function ULib.splitString(inputStr, sep)
+	if sep == nil then
+		sep = "%s"
+	end
+	local t={}
+	for str in string.gmatch(inputStr, "([^"..sep.."]+)") do
+			table.insert(t, str)
+	end
+	return t
+end
 
 --[[
 	Function: removeCommentHeader
@@ -1007,6 +1082,44 @@ function isClass( obj )
 	return type( obj ) == "table" and type( obj.isa ) == "function" and obj:isa( root_class )
 end
 
+
+local alphanumeric_ranges = {
+    {48, 57}, -- 0 - 9
+    {65, 90}, -- A - Z
+    {97, 122} -- a - z
+}
+
+local unique_strings = unique_strings or {}
+
+function ULib.randomString(length, alphanumeric)
+    if length then
+        length = math.Clamp(tonumber(math.floor(length)), 8, 30)
+    else
+        length = 8
+    end
+
+    local ret = ""
+
+    if alphanumeric then
+        for i = 1, length do
+            local range = alphanumeric_ranges[math.random(1, 3)]
+
+            ret = ret .. string.char(math.random(range[1], range[2]))
+        end
+    else
+        for i = 1, length do
+            ret = ret .. string.char(math.random(33, 126))
+        end
+    end
+
+    if unique_strings[ret] then
+        return string.Random(length, alphanumeric)
+    end
+
+    unique_strings[ret] = ret
+
+    return ret
+end
 
 -- This wonderful bit of following code will make sure that no rogue coder can screw us up by changing the value of '_'
 _ = nil -- Make sure we're starting out right.
