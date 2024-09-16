@@ -264,6 +264,7 @@ ULib.HOOK_USER_KICKED = "ULibPlayerKicked"
 		v2.62 - Initial
 ]]
 ULib.HOOK_USER_BANNED = "ULibPlayerBanned"
+ULib.HOOK_IP_BANNED = "ULibIPBanned"
 
 --[[
 	Hook: ULibPlayerUnBanned
@@ -281,6 +282,8 @@ ULib.HOOK_USER_BANNED = "ULibPlayerBanned"
 		v2.62 - Initial
 ]]
 ULib.HOOK_USER_UNBANNED = "ULibPlayerUnBanned"
+
+ULib.HOOK_IP_UNBANNED = "ULibIPUnBanned"
 
 --[[
 	Hook: ULibGroupCreated
